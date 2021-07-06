@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: "nginx"
+    ports:
+      - "80:80"
+    volumes:
+      - .:/api
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./staticfiles:/static
+    depends_on:
+      - api
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "api"
+    command: bash -c "
+      gunicorn diary.wsgi:application --bind 0.0.0.0:8000
+      "
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/api
+      - ./staticfiles:/staticfiles
+    expose:
+      - "8000"
