@@ -45,12 +45,3 @@ class MyPostView(APIView):
         serializer = PostSerializer(posts, many=True)
 
         return Response(serializer.data)
-
-    def post(self, request):
-        user = self.request.user
-        data = request.data
-
-        serializer = PostSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save(user=user)
-            return Response(serializer.data)
