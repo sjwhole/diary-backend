@@ -9,6 +9,7 @@ class Post(models.Model):
     body = models.TextField()
     grade = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     created_at = models.DateField(auto_now_add=True)
+    share = models.BooleanField(default=False)
 
     def __str__(self):
         return self.body
