@@ -54,3 +54,58 @@ class MyRegisterView(RegisterView):
                 'message': str(e)
             }
             return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def kakao(request):
+    try:
+        app_rest_api_key = getattr(settings, 'KAKAO_REST_API_KEY', None)
+        redirect_uri = getattr(settings, 'KAKAO_REDIRECT_URI', None)
+        user_token = request.data.get("code")
+
+        # post request
+        token_request = requests.get(
+            f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={app_rest_api_key}&redirect_uri={redirect_uri}&code={user_token}"
+        )
+        token_response_json = token_request.json()
+        error = token_response_json.get("error", None)
+
+        # if there is an error from token_request
+        if error is not None:
+            raise SocialException()
+        access_token = token_response_json.get("access_token")
+
+        # post request
+        profile_request = requests.post(
+            "https://kapi.kakao.com/v2/user/me",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        profile_json = profile_request.json()
+
+        # parsing profile json
+        kakao_id = profile_json["id"]
+        nickname = profile_json["kakao_account"]["profile"]["nickname"]
+        try:
+            user = login_by_social(kakao_id)
+        except User.DoesNotExist:
+            user = register_by_social(kakao_id, nickname)
+
+        token = create_token(user)
+        headers = {"Token": token}
+
+        update_last_login(None, user)
+
+        content = {
+            "message": "로그인에 성공했습니다"
+        }
+        return Response(content, headers=headers)
+    except SocialException as e:
+        content = {
+            "message": str(e)
+        }
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        content = {
+            "message": str(e)
+        }
+        return Response(content, status=status.HTTP_400_BAD_REQUEST)
