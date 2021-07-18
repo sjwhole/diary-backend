@@ -91,14 +91,13 @@ def kakao(request):
             user = register_by_social(kakao_id, nickname)
 
         token = create_token(user)
-        headers = {"Token": token}
 
         update_last_login(None, user)
 
         content = {
-            "message": "로그인에 성공했습니다"
+            "Token": token
         }
-        return Response(content, headers=headers)
+        return Response(content)
     except SocialException as e:
         content = {
             "message": str(e)
