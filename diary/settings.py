@@ -40,6 +40,7 @@ SECRET_KEY = get_secret("SECRET_KEY")
 
 # Kakao 
 KAKAO_REST_API_KEY = get_secret("KAKAO_REST_API_KEY")
+KAKAO_REDIRECT_URI = get_secret("KAKAO_REDIRECT_URI")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
