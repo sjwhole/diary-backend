@@ -1,8 +1,16 @@
+import requests
+from django.conf import settings
+from django.contrib.auth.models import update_last_login
 from django.db import IntegrityError
 from rest_auth.registration.views import RegisterView
 from rest_auth.views import LoginView
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from user.models import User
+from .exceptions import SocialException
+from .utils import create_token, login_by_social, register_by_social
 
 
 class MyLoginView(LoginView):
@@ -15,11 +23,11 @@ class MyLoginView(LoginView):
         }
 
         serializer = serializer_class(instance=data, context={'request': self.request})
-        headers = {'Token': serializer.data.get('token')}
+
         content = {
-            'message': '로그인에 성공했습니다.'
+            'Token': serializer.data.get('token')
         }
-        response = Response(content, headers=headers, status=status.HTTP_200_OK)
+        response = Response(content, status=status.HTTP_200_OK)
 
         from rest_framework_jwt.settings import api_settings as jwt_settings
         if jwt_settings.JWT_AUTH_COOKIE:
@@ -36,12 +44,11 @@ class MyRegisterView(RegisterView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             user = self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            headers['Token'] = self.get_response_data(user).get('token')
+
             content = {
-                'message': '회원가입에 성공했습니다.'
+                'Token': self.get_response_data(user).get('token')
             }
-            return Response(content, status=status.HTTP_201_CREATED, headers=headers)
+            return Response(content, status=status.HTTP_201_CREATED)
         except IntegrityError as e:
             content = {
                 'message': str(e)
