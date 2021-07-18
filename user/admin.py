@@ -8,13 +8,12 @@ from . import models
 class UserAdmin(admin.ModelAdmin):
     list_display = (
         'username',
-        'email',
+        'nickname',
         'date_joined',
     )
 
     list_display_links = (
         'username',
-        'email',
     )
 
 
