@@ -11,7 +11,10 @@ class UserManager(BaseUserManager):
             nickname=nickname,
             kakao_id=kakao_id
         )
-        user.set_password(password)
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
         user.save(using=self._db)
         return user
 

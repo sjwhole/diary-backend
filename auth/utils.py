@@ -1,3 +1,5 @@
+from random import randint
+
 from rest_framework_jwt.settings import api_settings
 
 from user.models import User
@@ -17,6 +19,11 @@ def login_by_social(kakao_id):
 
 
 def register_by_social(kakao_id, nickname):
-    user = User.objects.create_user(kakao_id=kakao_id, nickname=nickname)
+    while True:
+        random_num = "".join([str(randint(0, 9)) for _ in range(4)])
+        username = f"{nickname}#{random_num}"
+        if not User.objects.filter(username=f"nickname#{random_num}").exists():
+            break
+    user = User.objects.create_user(username=username, kakao_id=kakao_id, nickname=nickname)
 
     return user
