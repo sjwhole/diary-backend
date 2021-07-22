@@ -38,6 +38,10 @@ def get_secret(setting, secrets=secrets):
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret("SECRET_KEY")
 
+# Kakao 
+KAKAO_REST_API_KEY = get_secret("KAKAO_REST_API_KEY")
+KAKAO_REDIRECT_URI = get_secret("KAKAO_REDIRECT_URI")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -65,10 +69,6 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 1
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = "none"
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`

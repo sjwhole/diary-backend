@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from diary.func import set_message
+from diary.utils import set_message
 from post.models import Post
 from post.serializers import PostSerializer
 from .permissions import IsOwner

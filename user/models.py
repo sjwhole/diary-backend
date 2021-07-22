@@ -5,21 +5,20 @@ from django.db import models
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def create_user(self, email, username, password=None):
-        if not email:
-            raise ValueError('must have user email')
+    def create_user(self, nickname, username=None, kakao_id=None, password=None):
         user = self.model(
-            email=self.normalize_email(email),
-            username=username
+            username=username,
+            nickname=nickname,
+            kakao_id=kakao_id
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, username, password):
+    def create_superuser(self, username, nickname, password):
         user = self.create_user(
-            email=self.normalize_email(email),
             username=username,
+            nickname=nickname,
             password=password
         )
         user.is_superuser = True
@@ -31,18 +30,28 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
-    email = models.EmailField(
-        max_length=255,
-        unique=True,
-    )
     username = models.CharField(
         max_length=20,
-        null=False,
-        unique=True
+        unique=True,
+        null=True,
+        blank=True
     )
+
+    nickname = models.CharField(
+        max_length=20,
+        null=False,
+    )
+
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    kakao_id = models.IntegerField(null=True, blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['nickname']
+
+    def __str__(self):
+        if self.username:
+            return self.username
+        else:
+            return f"카카오-{self.nickname}"
