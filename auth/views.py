@@ -47,7 +47,8 @@ class MyRegisterView(RegisterView):
             user = self.perform_create(serializer)
 
             content = {
-                'Token': self.get_response_data(user).get('token')
+                'Token': self.get_response_data(user).get('token'),
+                'nickname': user.nickname
             }
             return Response(content, status=status.HTTP_201_CREATED)
         except IntegrityError as e:
