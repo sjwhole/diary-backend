@@ -97,7 +97,8 @@ def kakao(request):
         update_last_login(None, user)
 
         content = {
-            "Token": token
+            "Token": token,
+            "nickname": user.nickname
         }
         return Response(content)
     except SocialException as e:
