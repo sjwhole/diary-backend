@@ -10,8 +10,8 @@ class PostTests(APITestCase):
     def setUp(self) -> None:
         url = "/auth/registration/"
         data = {
-            "email": "test@test.com",
             "username": "tester",
+            "nickname": "testnick",
             "password": "rootroot",
         }
         Post.objects.create(id=1, user_id=1, grade=5, body="Good", created_at=parse_date("2021-07-07"))
@@ -20,9 +20,9 @@ class PostTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), 1)
-        self.assertEqual(User.objects.get().email, "test@test.com")
+        self.assertEqual(User.objects.get().username, "tester")
 
-        self.jwt_token = response.headers["Token"]
+        self.jwt_token = response.data["Token"]
 
     def test_create_post(self):
         url = "/posts/"

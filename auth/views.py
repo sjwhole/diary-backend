@@ -25,7 +25,8 @@ class MyLoginView(LoginView):
         serializer = serializer_class(instance=data, context={'request': self.request})
 
         content = {
-            'Token': serializer.data.get('token')
+            'Token': serializer.data.get('token'),
+            'nickname': self.user.nickname
         }
         response = Response(content, status=status.HTTP_200_OK)
 
@@ -46,7 +47,8 @@ class MyRegisterView(RegisterView):
             user = self.perform_create(serializer)
 
             content = {
-                'Token': self.get_response_data(user).get('token')
+                'Token': self.get_response_data(user).get('token'),
+                'nickname': user.nickname
             }
             return Response(content, status=status.HTTP_201_CREATED)
         except IntegrityError as e:
@@ -95,7 +97,8 @@ def kakao(request):
         update_last_login(None, user)
 
         content = {
-            "Token": token
+            "Token": token,
+            "nickname": user.nickname
         }
         return Response(content)
     except SocialException as e:
