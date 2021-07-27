@@ -25,7 +25,8 @@ class MyLoginView(LoginView):
         serializer = serializer_class(instance=data, context={'request': self.request})
 
         content = {
-            'Token': serializer.data.get('token')
+            'Token': serializer.data.get('token'),
+            'nickname': self.user.nickname
         }
         response = Response(content, status=status.HTTP_200_OK)
 
